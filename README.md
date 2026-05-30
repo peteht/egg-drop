@@ -118,11 +118,3 @@ Scan the QR code with Expo Go. **A real device is required** — the acceleromet
 - **`src/utils/dropDetection.ts`** — self-contained state machine (waiting → freefall → impact). No React dependencies; pure logic, easily testable.
 - **`src/utils/storage.ts`** — generic `getAll<T>` / `prepend<T>` / `removeById<T>` / `updateById<T>` helpers underneath typed public functions. Structured for a future API swap without touching call sites.
 
----
-
-## Future ideas
-
-- Cloud sync / class leaderboard via API
-- Shareable result cards
-- Multi-drop session comparison chart
-- Teacher dashboard for class-wide data
