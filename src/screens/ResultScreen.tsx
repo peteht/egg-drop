@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Pressable, Alert } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types';
 import { SAMPLE_INTERVAL_MS } from '../utils/dropDetection';
+import { deleteRecord } from '../utils/storage';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Result'>;
 
@@ -12,6 +13,20 @@ export default function ResultScreen({ navigation, route }: Props): React.JSX.El
   const [showInfo, setShowInfo] = useState<boolean>(false);
 
   const atFloor = record.stopMs <= SAMPLE_INTERVAL_MS;
+
+  function handleDiscard(): void {
+    Alert.alert('Discard this drop?', 'It will be removed from history.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Discard',
+        style: 'destructive',
+        onPress: async () => {
+          await deleteRecord(record.id);
+          navigation.navigate('Home');
+        },
+      },
+    ]);
+  }
   const cushionLabel = atFloor ? `< ${SAMPLE_INTERVAL_MS}ms` : `${record.stopMs}ms`;
   const cushionPhrase = atFloor ? `under ${SAMPLE_INTERVAL_MS}ms` : `${record.stopMs}ms`;
 
@@ -96,13 +111,15 @@ export default function ResultScreen({ navigation, route }: Props): React.JSX.El
         <Text style={styles.buttonText}>Drop Again</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('History')}>
-        <Text style={styles.secondaryButtonText}>View History</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.secondaryButtonText}>Done</Text>
-      </TouchableOpacity>
+      <View style={styles.secondaryRow}>
+        <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('History')}>
+          <Text style={styles.secondaryButtonText}>History</Text>
+        </TouchableOpacity>
+        <Text style={styles.secondarySep}>·</Text>
+        <TouchableOpacity style={styles.secondaryButton} onPress={handleDiscard}>
+          <Text style={[styles.secondaryButtonText, styles.discardText]}>Discard</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -115,14 +132,14 @@ const styles = StyleSheet.create({
     padding: 32,
   },
   emoji: {
-    fontSize: 80,
-    marginBottom: 16,
+    fontSize: 60,
+    marginBottom: 10,
   },
   verdict: {
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: '900',
     color: '#2D2D2D',
-    marginBottom: 12,
+    marginBottom: 8,
     textAlign: 'center',
   },
   subtext: {
@@ -211,13 +228,27 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#FFF',
   },
+  secondaryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
+  },
   secondaryButton: {
     paddingVertical: 10,
+    paddingHorizontal: 4,
   },
   secondaryButtonText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#888',
     textDecorationLine: 'underline',
+  },
+  secondarySep: {
+    fontSize: 15,
+    color: '#CCC',
+  },
+  discardText: {
+    color: '#E53935',
   },
   infoOverlay: {
     flex: 1,

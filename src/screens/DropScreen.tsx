@@ -10,6 +10,10 @@ import { saveRecord } from '../utils/storage';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Drop'>;
 
+// Persists the last-chosen surface across navigation so the student
+// doesn't have to re-pick after every drop.
+let rememberedSurface: Surface = 'solid';
+
 const SURFACES: { value: Surface; label: string; emoji: string }[] = [
   { value: 'solid',  label: 'Solid',  emoji: '🪨' },
   { value: 'carpet', label: 'Carpet', emoji: '🟫' },
@@ -18,7 +22,7 @@ const SURFACES: { value: Surface; label: string; emoji: string }[] = [
 
 export default function DropScreen({ navigation }: Props): React.JSX.Element {
   const [currentG, setCurrentG]     = useState<number>(0);
-  const [surface, setSurface]       = useState<Surface>('solid');
+  const [surface, setSurface]       = useState<Surface>(rememberedSurface);
   const pulseAnim                   = useRef(new Animated.Value(1)).current;
   const detectorRef                 = useRef<DropDetector | null>(null);
   const subscriptionRef             = useRef<{ remove: () => void } | null>(null);
@@ -26,7 +30,11 @@ export default function DropScreen({ navigation }: Props): React.JSX.Element {
 
   // Keep a ref in sync so the detector callback always reads the latest surface
   // without needing to be re-created when the user taps a different button.
-  useEffect(() => { surfaceRef.current = surface; }, [surface]);
+  // Also remember the choice for the next drop.
+  useEffect(() => {
+    surfaceRef.current = surface;
+    rememberedSurface = surface;
+  }, [surface]);
 
   useEffect(() => {
     Animated.loop(
@@ -67,7 +75,7 @@ export default function DropScreen({ navigation }: Props): React.JSX.Element {
     <View style={styles.container}>
       <Text style={styles.heading}>Ready to drop!</Text>
       <Text style={styles.instructions}>
-        Wrap your phone in your armor,{'\n'}then drop it from up high — the{'\n'}higher the drop, the better the test.
+        Wrap your phone in your armor,{'\n'}then drop from at least <Text style={styles.instructionsBold}>1 meter</Text>.{'\n'}Higher = more accurate results.
       </Text>
 
       <View style={styles.surfaceRow}>
@@ -117,6 +125,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 25,
     marginBottom: 28,
+  },
+  instructionsBold: {
+    fontWeight: '800',
+    color: '#2D2D2D',
   },
   surfaceRow: {
     flexDirection: 'row',
