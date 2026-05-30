@@ -2,6 +2,8 @@
 
 export type Prediction = 'safe' | 'cracked';
 
+export type Surface = 'solid' | 'carpet' | 'grass';
+
 /**
  * Raw physics output from a single drop — everything computed by the detector
  * before the record is persisted.
@@ -24,6 +26,7 @@ export interface DropResult {
 export interface DropRecord extends DropResult {
   id: string;
   date: string;
+  surface: Surface;
   eggTested: boolean;
   actualResult: Prediction | null;
   predictionCorrect: boolean | null;

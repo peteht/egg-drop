@@ -48,6 +48,12 @@ export default function ResultScreen({ navigation, route }: Props): React.JSX.El
             <Text style={styles.statValue}>{record.height}m</Text>
             <Text style={styles.statLabel}>Drop</Text>
           </View>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>
+              {record.surface.charAt(0).toUpperCase() + record.surface.slice(1)}
+            </Text>
+            <Text style={styles.statLabel}>Surface</Text>
+          </View>
         </View>
       </View>
 

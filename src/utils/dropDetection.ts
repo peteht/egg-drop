@@ -105,7 +105,14 @@ export function createDropDetector(
         if (g > peakG) peakG = g;
         if (g > REST_THRESHOLD) {
           stopSamples++;
+        } else if (g < FREEFALL_THRESHOLD) {
+          // g dropped back to near-zero — mid-air bump, not a landing.
+          // Discard the pseudo-impact and resume measuring freefall.
+          state = 'freefall';
+          stopSamples = 0;
+          peakG = 0;
         } else {
+          // g settling near 1g — real landing, record result.
           onResult(computeResult(freefallSamples, stopSamples, peakG, intervalMs));
           reset();
         }
