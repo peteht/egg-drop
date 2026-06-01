@@ -8,6 +8,11 @@ interface Props {
 
 const RULES = [
   {
+    emoji: '🥚',
+    title: 'Put the phone where the egg would go',
+    body: 'The app measures what the phone experiences. Position it inside your armor the same way you\'d position a real egg.',
+  },
+  {
     emoji: '📏',
     title: 'Drop from at least 1 meter',
     body: 'Short drops underestimate impact force. The app may show "safe" when the egg would actually crack.',
@@ -26,11 +31,6 @@ const RULES = [
     emoji: '⬇️',
     title: 'Drop straight down',
     body: 'Throwing or angling the phone changes the velocity calculation and throws off the result.',
-  },
-  {
-    emoji: '🥚',
-    title: 'Put the phone where the egg would go',
-    body: 'The app measures what the phone experiences. Position it inside your armor the same way you\'d position a real egg.',
   },
 ];
 
