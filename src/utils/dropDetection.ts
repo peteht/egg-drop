@@ -34,11 +34,11 @@ export function magnitude({ x, y, z }: Vector3): number {
 }
 
 /**
- * Protection score 0–100, higher = better armor.
- * Tuned so ~30g (crack threshold) scores low; gentle landings approach 100.
+ * Cosmetic score 0–100 derived from peak g — higher = lower peak force.
+ * Display-only; the crack/safe decision is made separately from peakG.
  */
-export function protectionScore(estG: number): number {
-  return Math.max(0, Math.min(100, Math.round(100 - estG * 2.5)));
+export function protectionScore(peakG: number): number {
+  return Math.max(0, Math.min(100, Math.round(100 - peakG * 2.5)));
 }
 
 function computeResult(
@@ -60,8 +60,8 @@ function computeResult(
     height: parseFloat(height.toFixed(2)),
     freefallMs: Math.round(tFreefall * 1000),
     stopMs: Math.round(tStop * 1000),
-    score: protectionScore(estG),
-    prediction: estG >= CRACK_THRESHOLD_G ? 'cracked' : 'safe',
+    score: protectionScore(peakG),
+    prediction: peakG >= CRACK_THRESHOLD_G ? 'cracked' : 'safe',
   };
 }
 
