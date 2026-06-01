@@ -10,7 +10,7 @@ const RULES = [
   {
     emoji: '🥚',
     title: 'Put the phone where the egg would go',
-    body: 'The app measures what the phone experiences. Position it inside your armor the same way you\'d position a real egg.',
+    body: 'Never drop your phone unprotected. Position it inside your armor the same way you\'d position a real egg — the app measures what the phone experiences.',
   },
   {
     emoji: '📏',
