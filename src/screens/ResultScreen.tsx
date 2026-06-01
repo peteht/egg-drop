@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Pressable, Alert } from 'react-native';
+import HelpModal from '../components/HelpModal';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types';
 import { SAMPLE_INTERVAL_MS } from '../utils/dropDetection';
@@ -11,6 +12,17 @@ export default function ResultScreen({ navigation, route }: Props): React.JSX.El
   const { record } = route.params;
   const safe = record.prediction === 'safe';
   const [showInfo, setShowInfo] = useState<boolean>(false);
+  const [showHelp, setShowHelp] = useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => setShowHelp(true)} hitSlop={10} style={{ marginRight: 4 }}>
+          <Text style={{ fontSize: 18, fontWeight: '800', color: '#999' }}>?</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   const atFloor = record.stopMs <= SAMPLE_INTERVAL_MS;
 
@@ -30,8 +42,18 @@ export default function ResultScreen({ navigation, route }: Props): React.JSX.El
   const cushionLabel = atFloor ? `< ${SAMPLE_INTERVAL_MS}ms` : `${record.stopMs}ms`;
   const cushionPhrase = atFloor ? `under ${SAMPLE_INTERVAL_MS}ms` : `${record.stopMs}ms`;
 
+  const shortDrop = record.height < 1.0;
+
   return (
     <View style={[styles.container, { backgroundColor: safe ? '#E8F8E8' : '#FDE8E8' }]}>
+      <HelpModal visible={showHelp} onClose={() => setShowHelp(false)} />
+      {shortDrop && (
+        <View style={styles.shortDropBanner}>
+          <Text style={styles.shortDropText}>
+            ⚠️ Drop was under 1m — results may be unreliable
+          </Text>
+        </View>
+      )}
       <Text style={styles.emoji}>{safe ? '🥚' : '💥'}</Text>
       <Text style={styles.verdict}>{safe ? 'Your armor held!' : 'Shell shock!'}</Text>
       <Text style={styles.subtext}>
@@ -130,6 +152,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 32,
+  },
+  shortDropBanner: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFF3CC',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5C842',
+  },
+  shortDropText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#B8860B',
+    textAlign: 'center',
   },
   emoji: {
     fontSize: 60,

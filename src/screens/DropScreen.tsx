@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import HelpModal from '../components/HelpModal';
 import { Accelerometer } from 'expo-sensors';
 import * as Haptics from 'expo-haptics';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -22,11 +23,22 @@ const SURFACES: { value: Surface; label: string; emoji: string }[] = [
 
 export default function DropScreen({ navigation }: Props): React.JSX.Element {
   const [currentG, setCurrentG]     = useState<number>(0);
+  const [showHelp, setShowHelp]     = useState(false);
   const [surface, setSurface]       = useState<Surface>(rememberedSurface);
   const pulseAnim                   = useRef(new Animated.Value(1)).current;
   const detectorRef                 = useRef<DropDetector | null>(null);
   const subscriptionRef             = useRef<{ remove: () => void } | null>(null);
   const surfaceRef                  = useRef<Surface>(surface);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => setShowHelp(true)} hitSlop={10} style={{ marginRight: 4 }}>
+          <Text style={{ fontSize: 18, fontWeight: '800', color: '#999' }}>?</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   // Keep a ref in sync so the detector callback always reads the latest surface
   // without needing to be re-created when the user taps a different button.
@@ -73,6 +85,7 @@ export default function DropScreen({ navigation }: Props): React.JSX.Element {
 
   return (
     <View style={styles.container}>
+      <HelpModal visible={showHelp} onClose={() => setShowHelp(false)} />
       <Text style={styles.heading}>Ready to drop!</Text>
       <Text style={styles.instructions}>
         Wrap your phone in your armor,{'\n'}then drop from at least <Text style={styles.instructionsBold}>1 meter</Text>.{'\n'}Higher = more accurate results.

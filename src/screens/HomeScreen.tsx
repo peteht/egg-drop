@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated } from 'react-native';
+import HelpModal from '../components/HelpModal';
 import Svg, { Path, Circle, Ellipse, G } from 'react-native-svg';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../types';
@@ -85,6 +86,7 @@ function EggLitter(): React.JSX.Element {
 
 export default function HomeScreen({ navigation }: Props): React.JSX.Element {
   const wobble = useRef(new Animated.Value(0)).current;
+  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
     Animated.loop(
@@ -103,6 +105,10 @@ export default function HomeScreen({ navigation }: Props): React.JSX.Element {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.helpBtn} onPress={() => setShowHelp(true)}>
+        <Text style={styles.helpBtnText}>?</Text>
+      </TouchableOpacity>
+      <HelpModal visible={showHelp} onClose={() => setShowHelp(false)} />
       <Text style={styles.title}>Egg Drop</Text>
       <Text style={styles.subtitle}>
         Wrap your phone, then drop it.{'\n'}We'll tell you if the egg survives.
@@ -180,5 +186,23 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+  },
+  helpBtn: {
+    position: 'absolute',
+    top: 56,
+    right: 24,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#CCC',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  helpBtnText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#999',
   },
 });
