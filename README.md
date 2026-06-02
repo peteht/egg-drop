@@ -143,3 +143,16 @@ Full coverage on the physics engine and storage layer. 37 tests, 100% statement/
 - **`src/utils/dropDetection.ts`** — self-contained 3-state machine (waiting → freefall → impact). No React dependencies; pure logic with 100% test coverage.
 - **`src/utils/storage.ts`** — generic `getAll<T>` / `prepend<T>` / `removeById<T>` / `updateById<T>` helpers under typed public functions. Structured for a future API swap without touching call sites.
 - **`src/components/HelpModal.tsx`** — shared FAQ modal used on Home, Drop, and Result screens.
+
+---
+
+## Privacy Policy
+
+Egg Drop does not collect, store, or transmit any personal data.
+
+- All drop history is stored locally on your device only and never leaves it.
+- The app accesses the device accelerometer to measure impact force. No sensor data is transmitted or shared.
+- The app does not use analytics, advertising, or third-party tracking of any kind.
+- The app does not require an account or any personal information to use.
+
+If you have questions, contact: peterugh@gmail.com
