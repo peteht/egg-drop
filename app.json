@@ -8,10 +8,18 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.eggdrop.app"
+      "bundleIdentifier": "com.peterugh.eggdrop",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "27b9045f-4ac2-432c-af7a-d843198b9185"
+      }
     }
   }
 }
