@@ -167,4 +167,4 @@ Egg Drop does not collect, store, or transmit any personal data.
 - The app does not use analytics, advertising, or third-party tracking of any kind.
 - The app does not require an account or any personal information to use.
 
-If you have questions, contact: peterugh@gmail.com
+If you have questions, open an issue: https://github.com/peteht/egg-drop/issues/new
