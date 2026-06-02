@@ -146,6 +146,16 @@ Full coverage on the physics engine and storage layer. 37 tests, 100% statement/
 
 ---
 
+## Support
+
+If you run into a bug, have a question, or want to suggest a feature, open an issue in this repository:
+
+👉 **https://github.com/peteht/egg-drop/issues/new**
+
+Please include what device you're using, what you expected to happen, and what actually happened.
+
+---
+
 ## Privacy Policy
 
 Egg Drop does not collect, store, or transmit any personal data.
