@@ -5,7 +5,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList, DropRecord, Prediction } from '../types';
-import { getHistory, deleteRecord, updateRecord } from '../utils/storage';
+import { getHistory, deleteRecord, clearHistory, updateRecord } from '../utils/storage';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'History'>;
 
@@ -87,6 +87,20 @@ export default function HistoryScreen({ navigation: _navigation }: Props): React
     return true;
   }), [history, filter]);
 
+  function handleClearAll(): void {
+    Alert.alert('Clear all history?', 'This cannot be undone.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Clear All',
+        style: 'destructive',
+        onPress: async () => {
+          await clearHistory();
+          setHistory([]);
+        },
+      },
+    ]);
+  }
+
   async function handleDelete(id: string): Promise<void> {
     Alert.alert('Delete this drop?', '', [
       { text: 'Cancel', style: 'cancel' },
@@ -136,6 +150,9 @@ export default function HistoryScreen({ navigation: _navigation }: Props): React
             <Text style={[styles.filterChipText, filter === f && styles.filterChipTextActive]}>{f}</Text>
           </TouchableOpacity>
         ))}
+        <TouchableOpacity style={styles.clearBtn} onPress={handleClearAll}>
+          <Text style={styles.clearBtnText}>Clear</Text>
+        </TouchableOpacity>
       </View>
 
       {/* FlatList<DropRecord> — generic ensures type-safe renderItem */}
@@ -206,6 +223,15 @@ const styles = StyleSheet.create({
   filterChipActive: { backgroundColor: '#F5C842' },
   filterChipText: { fontSize: 15, fontWeight: '600', color: '#888' },
   filterChipTextActive: { color: '#2D2D2D' },
+  clearBtn: {
+    marginLeft: 'auto',
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#FFCDD2',
+  },
+  clearBtnText: { fontSize: 14, fontWeight: '600', color: '#E53935' },
   card: {
     backgroundColor: '#FFF',
     borderRadius: 16,

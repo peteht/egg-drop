@@ -51,6 +51,8 @@ export const saveRecord = (record: DropRecord): Promise<void> =>
 export const deleteRecord = (id: string): Promise<void> =>
   removeById<DropRecord>(HISTORY_KEY, id);
 
+export const clearHistory = (): Promise<void> =>
+  AsyncStorage.removeItem(HISTORY_KEY);
 
 export const updateRecord = (id: string, changes: Partial<DropRecord>): Promise<void> =>
   updateById<DropRecord>(HISTORY_KEY, id, changes);
