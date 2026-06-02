@@ -3,6 +3,7 @@
 A STEM app for egg-drop competitions. Wrap your phone in your armor design, drop it, and find out if your egg would have survived — no eggs wasted.
 
 ---
+<img width="1000" height="1000" alt="image" src="https://github.com/user-attachments/assets/c6efbc25-47e7-4710-ace1-f63ac2a0179a" />
 
 ## What it does
 
