@@ -6,35 +6,37 @@ A STEM app for egg-drop competitions. Wrap your phone in your armor design, drop
 
 ## What it does
 
-Instead of cracking real eggs to test your armor, you use your phone as a stand-in sensor. The app reads your phone's accelerometer during the drop, measures how well your armor cushioned the impact, and gives you a **Protection Score** you can compare across designs.
+Instead of cracking real eggs to test your armor, you use your phone as a stand-in sensor. The app reads your phone's accelerometer during the drop, measures the peak impact force, and gives you a **Protection Score** you can compare across designs.
 
-The physics is real: the same forces that would crack an egg act on your phone. If your armor is good enough to protect the phone's internals, it's good enough for an egg.
+The physics is real: the same forces that would crack an egg act on your phone. If your armor keeps the peak g-force below the crack threshold, the egg survives.
 
 ---
 
 ## How to use it
 
 1. **Build your armor** — wrap your phone in whatever padding, foam, bubble wrap, or contraption you're testing.
-2. **Tap Start Drop** on the home screen.
-3. **Drop your phone** from your target height. Drop, don't throw — throwing inflates the height reading (see [Known Limitations](#known-limitations)).
-4. **Read the result** — you'll see your Protection Score, the estimated impact force, cushion time, and drop height.
-5. **Iterate** — try to beat your score with a better design.
-6. **Test a real egg** — once you're confident in your armor, use the history screen to log whether an actual egg survived and see if the app's prediction was right.
+2. **Put the phone where the egg would go** — the app measures what the phone experiences, so position it the same way you'd position a real egg.
+3. **Tap Start Drop** on the home screen.
+4. **Drop from at least 1 meter** — short drops underestimate impact force and may show "safe" when the egg would actually crack.
+5. **Full release** — let go completely and step back. Don't guide the drop or catch it on landing.
+6. **Read the result** — you'll see your Protection Score, the peak g-force, and drop height.
+7. **Iterate** — try to beat your score with a better design.
+8. **Test a real egg** — once you're confident in your armor, use the history screen to log whether an actual egg survived and see if the app's prediction was right.
 
 ---
 
 ## The result screen
 
 ### Protection Score (0–100)
-The headline number. Higher is better. It reflects how gently your armor absorbed the landing — lower impact force = higher score. Use this to compare designs and set a class record.
+The headline number. Higher is better. Derived directly from peak g-force — less peak force on landing = higher score. Use this to compare designs.
 
-### Cushion Time
-How long your armor took to bring the phone to a stop. This is the key engineering metric — **longer stop = less force on the egg**. Good armor compresses over 30–100ms; bare phone on tile stops in under 10ms.
+The background color scales with the score:
+- 🟢 **Green** — score 50 or above (well-cushioned landing)
+- 🟠 **Orange** — score 20–49 (borderline)
+- 🔴 **Red** — score below 20 (high-impact landing)
 
-When cushion time shows **`< 10ms`**, the impact was faster than the sensor can measure (see [Known Limitations](#known-limitations)).
-
-### Force
-The estimated average deceleration in g-force during impact. Eggs crack at roughly 30g. Your armor's job is to keep this number low.
+### Peak g-force
+The highest force reading captured during impact. This is the single number that determines whether the egg cracks. The crack threshold is currently **30g** — calibrate this against real egg results using the history screen.
 
 ### Drop Height
 Calculated from how long the phone was in free-fall before impact. Drop from higher for more meaningful data — a taller drop spreads design differences further apart.
@@ -43,45 +45,59 @@ Calculated from how long the phone was in free-fall before impact. Drop from hig
 
 ## History screen
 
-Every drop is automatically saved. Tap a record to expand it.
+Every drop is automatically saved.
 
 - **Filter** — switch between All / Safe / Cracked at the top.
 - **Protection score badge** — compare your designs at a glance.
-- **I tested a real egg** — after a drop, you can record whether an actual egg survived and see if the app's prediction was correct. This is the science experiment part: hypothesis vs. observed result.
-- **Delete** — tap 🗑 to remove a record and keep your history tidy.
+- **I tested a real egg →** — after a drop, record whether an actual egg survived and see if the app's prediction was correct. This is the science experiment part: hypothesis vs. observed result.
+- **Delete** — tap 🗑 to remove a single record.
+- **Clear** — remove all history at once (with confirmation).
+
+---
+
+## Tips for accurate results
+
+Tap the **?** button on any screen for the full list. The short version:
+
+- **Never drop your phone unprotected**
+- **Drop from at least 1 meter** — short drops underestimate force
+- **Full release** — don't guide or catch the phone
+- **Drop straight down** — throwing or angling skews the velocity calculation
+- **Step back** — don't touch the phone until the result appears
 
 ---
 
 ## The physics (for the curious)
 
-Standard apps try to read the **peak g-force** on impact. This doesn't work well here because a hard impact on concrete lasts ~2ms — faster than the phone's sensor (which samples every ~10ms). The sensor misses the spike entirely and reports a falsely safe reading.
+The app captures the **peak g-force** at the moment of impact. Peak g is the single most reliable indicator of whether an egg cracks:
 
-This app uses a different approach:
+- A hard surface stops the phone almost instantly → high peak g
+- Good armor compresses slowly → lower peak g spread over time
 
-1. **Free-fall timing** → impact velocity  
-   During a drop the phone is weightless (~0g). The app times this free-fall period precisely (it lasts hundreds of milliseconds — well within sensor range) to calculate how fast the phone was traveling at impact.
+This means surface type, drop angle, and cushion duration are all already baked into the peak reading. The only threshold that matters is whether peak g exceeded the crack threshold.
 
-2. **Stopping time** → deceleration  
-   The app measures how long the deceleration pulse lasts after impact. Good armor compresses slowly (many samples); no armor stops the phone in a single sample (~10ms).
+```
+prediction = peakG >= CRACK_THRESHOLD_G ? 'cracked' : 'safe'
+score      = max(0, min(100, round(100 − peakG × 2.5)))
+```
 
-3. **Estimated force**  
-   `G = velocity ÷ (stop_time × 9.81)`  
-   Combining reliable velocity with measurable stop time gives a physically grounded force estimate — no fudge factors.
-
-This means the sensor is actually *better* at measuring soft, cushioned landings (exactly the ones worth scoring) than hard, bare ones. A hard bare drop saturates at the sensor floor; a well-cushioned drop spreads over many samples and gives a real reading.
+The crack threshold (currently 30g) is a starting point. Use the "I tested a real egg" feature to collect real crack vs. survive data and calibrate it for your specific setup.
 
 ---
 
 ## Known limitations
 
 **Sensor floor at `< 10ms`**  
-The phone samples every ~10ms (100Hz). Any impact faster than that — a bare drop on tile, for example — registers at the floor. You'll see `< 10ms` cushion time rather than the true sub-millisecond value. The verdict is still correct (a floor-speed stop from meaningful height will score low/cracked), but the exact g-force number is an estimate, not a measurement.
+The phone samples every ~10ms (100Hz). Any impact faster than that registers at the sensor floor. Peak g is still captured correctly; only the cushion time display is affected.
 
 **Drop, don't throw**  
-The free-fall timer starts the moment the phone leaves your hand. If you throw it upward, the phone is weightless during the entire arc — up and down — so the timer runs from release to landing, not just from the apex. This inflates the calculated height and velocity. For accurate readings, release from rest (drop straight down).
+The free-fall timer starts the moment the phone leaves your hand. Throwing upward inflates the calculated drop height.
+
+**1 meter minimum**  
+Below 1 meter, free-fall phase is short enough that release-motion noise can interfere with detection. The result screen shows a warning if the detected height is under 1m.
 
 **Calibration**  
-The 30g crack threshold and the score formula are based on published egg-drop physics, not measured against a specific egg. The "test a real egg" feature in the history screen exists so a class can validate and calibrate against actual results over time.
+The 30g crack threshold is a physics-based starting point. Collect real egg results to dial it in for your class.
 
 ---
 
@@ -98,6 +114,14 @@ npx expo start
 
 Scan the QR code with Expo Go. **A real device is required** — the accelerometer doesn't work in a simulator.
 
+### Running tests
+
+```bash
+npm test
+```
+
+Full coverage on the physics engine and storage layer. 37 tests, 100% statement/branch/function/line coverage.
+
 ---
 
 ## Tech stack
@@ -111,10 +135,11 @@ Scan the QR code with Expo Go. **A real device is required** — the acceleromet
 | Navigation | `@react-navigation/native-stack` |
 | Graphics | `react-native-svg` |
 | Haptics | `expo-haptics` |
+| Tests | Jest 29 + jest-expo |
 
 ### Architecture notes
 
-- **`src/types/index.ts`** — single source of truth for `DropRecord`, `DropResult`, `Prediction`, and `RootStackParamList`. All screens and utilities import from here.
-- **`src/utils/dropDetection.ts`** — self-contained state machine (waiting → freefall → impact). No React dependencies; pure logic, easily testable.
-- **`src/utils/storage.ts`** — generic `getAll<T>` / `prepend<T>` / `removeById<T>` / `updateById<T>` helpers underneath typed public functions. Structured for a future API swap without touching call sites.
-
+- **`src/types/index.ts`** — single source of truth for `DropRecord`, `DropResult`, `Prediction`, and `RootStackParamList`.
+- **`src/utils/dropDetection.ts`** — self-contained 3-state machine (waiting → freefall → impact). No React dependencies; pure logic with 100% test coverage.
+- **`src/utils/storage.ts`** — generic `getAll<T>` / `prepend<T>` / `removeById<T>` / `updateById<T>` helpers under typed public functions. Structured for a future API swap without touching call sites.
+- **`src/components/HelpModal.tsx`** — shared FAQ modal used on Home, Drop, and Result screens.
