@@ -41,7 +41,7 @@ function HistoryCard({ record, onDelete, onTestEgg }: HistoryCardProps): React.J
           <Text style={styles.cardPrediction}>{safe ? 'Egg safe' : 'Egg cracked'}</Text>
           <Text style={styles.cardDate}>{dateStr} · {timeStr}</Text>
           <Text style={styles.cardG}>
-            {record.estG}g · {record.height}m · {record.surface}
+            {record.estG}g · {record.height}m
           </Text>
         </View>
         {record.score != null && (

@@ -26,7 +26,7 @@ export interface DropResult {
 export interface DropRecord extends DropResult {
   id: string;
   date: string;
-  surface: Surface;
+  surface?: Surface;
   eggTested: boolean;
   actualResult: Prediction | null;
   predictionCorrect: boolean | null;

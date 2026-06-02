@@ -44,8 +44,20 @@ export default function ResultScreen({ navigation, route }: Props): React.JSX.El
 
   const shortDrop = record.height < 1.0;
 
+  function bgColor(): string {
+    if (record.score >= 50) return '#E8F8E8'; // green
+    if (record.score >= 20) return '#FFF3E0'; // orange
+    return '#FDE8E8';                          // red
+  }
+
+  function btnColor(): string {
+    if (record.score >= 50) return '#4CAF50';
+    if (record.score >= 20) return '#F57C00';
+    return '#E53935';
+  }
+
   return (
-    <View style={[styles.container, { backgroundColor: safe ? '#E8F8E8' : '#FDE8E8' }]}>
+    <View style={[styles.container, { backgroundColor: bgColor() }]}>
       <HelpModal visible={showHelp} onClose={() => setShowHelp(false)} />
       {shortDrop && (
         <View style={styles.shortDropBanner}>
@@ -85,12 +97,6 @@ export default function ResultScreen({ navigation, route }: Props): React.JSX.El
             <Text style={styles.statValue}>{record.height}m</Text>
             <Text style={styles.statLabel}>Drop</Text>
           </View>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>
-              {record.surface.charAt(0).toUpperCase() + record.surface.slice(1)}
-            </Text>
-            <Text style={styles.statLabel}>Surface</Text>
-          </View>
         </View>
       </View>
 
@@ -127,7 +133,7 @@ export default function ResultScreen({ navigation, route }: Props): React.JSX.El
       </Modal>
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: safe ? '#4CAF50' : '#E53935' }]}
+        style={[styles.button, { backgroundColor: btnColor() }]}
         onPress={() => navigation.navigate('Drop')}
       >
         <Text style={styles.buttonText}>Drop Again</Text>
