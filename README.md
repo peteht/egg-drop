@@ -148,6 +148,16 @@ Full coverage on the physics engine and storage layer. 37 tests, 100% statement/
 
 ---
 
+## Try the App
+
+Egg Drop is distributed via **TestFlight** (iOS only). If you'd like access — whether you're a student, teacher, or just curious — open an issue and request an invite:
+
+👉 **https://github.com/peteht/egg-drop/issues/new**
+
+Include your Apple ID email address and we'll send you a TestFlight invite.
+
+---
+
 ## Support
 
 If you run into a bug, have a question, or want to suggest a feature, open an issue in this repository:
